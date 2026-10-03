@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: aprova
+    runtime: node
+    plan: starter
+    region: frankfurt
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    disk:
+      name: uploads
+      mountPath: /var/data
+      sizeGB: 5
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: APP_URL
+        sync: false
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: UPLOAD_DIR
+        value: /var/data/uploads
+      - key: DATABASE_URL
+        fromDatabase:
+          name: aprova-db
+          property: connectionString
+      - key: VPOS_TOKEN
+        sync: false
+      - key: VPOS_POS_ID
+        sync: false
+
+databases:
+  - name: aprova-db
+    plan: basic-256mb
+    region: frankfurt
